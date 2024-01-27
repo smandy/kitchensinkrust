@@ -2,6 +2,7 @@ use std::env;
 use std::fmt::Display;
 use std::path::PathBuf;
 
+const N : usize = 10;
 
 fn print_lines_from_file(f : &PathBuf) {
     let contents = std::fs::read_to_string(f).expect("Something went wrong reading the file");
@@ -23,8 +24,6 @@ fn read_file<const N : usize>(f : &str) -> [[bool; N]; N]
     }
     a
 }
-
-
 
 
 fn main() {
@@ -62,10 +61,10 @@ fn main() {
     }
 
     impl<T : Default + Copy, const N : usize> SquareArray<T,N> {
-        fn supply() -> SquareArray<u8, N> {
-            SquareArray<u8, N> {
-                 [[u8; N]; N],
-            };
+        fn create_aux() -> SquareArray<u8, N> {
+            SquareArray::<u8, N> {
+                 array: [[Default::default(); N]; N],
+            }
         }
         fn new() -> Self {
             SquareArray {
@@ -76,6 +75,26 @@ fn main() {
     }
     // Print current directory
     println!("Current directory is {:?}", env::current_dir());
+
+    trait Repr {
+        fn repr(&self) -> String;
+    }
+
+    impl Repr for bool {
+        fn repr(&self) -> String {
+            if *self {
+                "X".to_string()
+            } else {
+                " ".to_string()
+            }
+        }
+    }
+    impl Repr for u32 {
+        fn repr(&self) -> String {
+            format!("{}", self);
+        }
+    }
+
 
     // Define a 'Printable' trait
     trait Printable {
@@ -99,6 +118,11 @@ fn main() {
     let square_array = SquareArray::<bool, 10>::new();
     let aux_array = SquareArray::<u8, 10>::new();
 
+    for y in 0..square_array.array.len() {
+        for x in 0..square_array.array.len(){
+            print!("({},{}) = {}", y, x, square_array.array[y][x].repr());
+        }
+    }
 
 
     square_array.print();
