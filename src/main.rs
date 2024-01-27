@@ -1,7 +1,5 @@
 use std::env;
-use typenum::Unsigned;
-
-static HELLO : &str = "HELLO";
+use std::fmt::Display;
 
 fn main() {
     println!("Hello, world!\nI'm a rustacean");
@@ -35,38 +33,41 @@ fn main() {
 
     // Define 2d array of integers
 
-    struct SquareArray<T : typenum::Unsigned> {
-        size: usize,
-        array: [[i32; T::USIZE]; T::USIZE],
+    struct SquareArray<T : Default, const N : usize> {
+        array: [[T; N]; N],
     }
 
-    impl<T> SquareArray<T> {
-        fn new(size: usize) -> SquareArray<T> {
+    impl<T : Default + Copy, const N : usize> SquareArray<T,N> {
+        fn new() -> Self {
             SquareArray {
-                size,
-                array: [[0; T::USIZE]; T::USIZE],
+                // initialize array
+                array: [[T::default() ; N]; N],
             }
         }
     }
+    // Print current directory
+    println!("Current directory is {:?}", env::current_dir());
 
     // Define a 'Printable' trait
     trait Printable {
         fn print(&self);
     }
 
-
     // Implement printable for square array
-    impl<T> Printable for SquareArray<T>
-    where
-        T: typenum::Unsigned,
+    impl<T : Display + Default,const N : usize> Printable for SquareArray<T,N>
     {
         fn print(&self) {
-            for i in 0..self.size {
-                for j in 0..self.size {
+            for i in 0..N {
+                for j in 0..N {
                     print!("{} ", self.array[i][j]);
                 }
                 println!();
             }
         }
     }
+
+    // Define a square array of size 10
+    let square_array = SquareArray::<u8, 10>::new();
+
+    square_array.print();
 }
