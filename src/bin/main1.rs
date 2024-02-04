@@ -106,9 +106,11 @@ fn main() {
     }
 
     // print current directory
-    println!("{:?}", env::current_dir());
+    //println!("{:?}", env::current_dir());
 
     let resource_dir = env::current_dir().unwrap().join("resources");
+
+    println!("Resource dir is {:?}", resource_dir);
 
     // define a 'squarable' trait
     trait Squarable {
