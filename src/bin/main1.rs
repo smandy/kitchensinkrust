@@ -152,21 +152,25 @@ fn main() {
                 }
 
                 // Match against best_result
+
+                let current_val = aux_array.array[y][x];
+                
                 match &mut best_result {
-                    Some(best) => {
-                        if aux_array.array[y][x] > best.num {
-                            best.num = aux_array.array[y][x];
-                            best.results.clear();
-                            best.results.push((y, x));
-                        } else if aux_array.array[y][x] == best.num {
-                            best.results.push((y, x));
-                        }
-                    }
                     None => {
                         best_result = Some(BestResult {
                             num: aux_array.array[y][x],
                             results: vec![(y, x)],
                         });
+                    }
+                    Some(best) if current_val > best.num=> {
+                        best.num = aux_array.array[y][x];
+                        best.results.clear();
+                        best.results.push((y, x));
+                    }
+                    Some(best) if current_val == best.num => {
+                        best.results.push((y, x));
+                    }
+                    Some(_) => {
                     }
                 }
             }
