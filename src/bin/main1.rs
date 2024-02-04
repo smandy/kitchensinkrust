@@ -130,24 +130,9 @@ fn main() {
     println!("{} squared is {}", 32u32, 32u32.square());
     println!("{} squared is {}", 32u16, 32u16.square());
 
-    // Define 2d array of integers
-
-    // Define a square array of size 10
-    //let mut square_array = SquareArray::<bool, 10>::new();
-
     let  square_array = read_file_from_path(
         resource_dir.join(PathBuf::from("dat1.txt") ));
     let mut aux_array = square_array.create_aux();
-
-    for y in 0..square_array.array.len() {
-        for x in 0..square_array.array.len(){
-            print!("({},{}) = {}", y, x, square_array.array[y][x].repr());
-        }
-    }
-
-    // Declare a vector of 2-tuples
-    let mut xs = Vec::new();
-    xs.push((1,2));
 
     #[derive(Debug)]
     struct BestResult {
@@ -189,4 +174,6 @@ fn main() {
     }
     square_array.print();
     aux_array.print();
+
+    println!("Best result {:?}", best_result);
 }
