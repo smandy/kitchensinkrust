@@ -160,9 +160,6 @@ fn main() {
             write!(f, "Best result is {} at {:?}", self.0, self.1)
         }
     }
-
-    //let s = best_result.as_ref().map(|s| s.to_string());
-
     println!("Best result {:?}", best_result);
 }
 
