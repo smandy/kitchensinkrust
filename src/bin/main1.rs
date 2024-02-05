@@ -1,4 +1,5 @@
 use std::env;
+use std::fmt::Display;
 //use std::fmt::Display;
 use std::path::PathBuf;
 
@@ -10,7 +11,7 @@ struct SquareArray<T: Default + Repr> {
 }
 
 trait DumpableWithMax {
-    fn dunmpWithMax(&self, maxData: (i32, i32, i32));
+    fn dump_with_max(&self, max_data: (usize, usize, i32));
 }
 
 impl<T: Default + Copy + Repr> SquareArray<T> {
@@ -39,12 +40,13 @@ impl<T: Default + Copy + Repr> SquareArray<T> {
 }
 
 impl DumpableWithMax for SquareArray<i32> {
-    fn dunmpWithMax(&self, maxData: (i32,i32,i32)) {
-        let (x, y, num) = maxData;
+    fn dump_with_max(&self, max_data: (usize, usize, i32)) {
+        let (y, x,  num) = max_data;
+        let n2 = num as usize;
         let mut ret = self.clone();
-        for yoffset  in y - num + 1..=y {
-            for xoffset in x - num + 1..=x {
-                ret.array[yoffset as usize][xoffset as usize] -= 1;
+        for yoffset  in y  - n2 + 1 ..=y {
+            for xoffset in x - n2 + 1..=x {
+                ret.array[yoffset][xoffset] -= 1;
             }
         }
         self.print();
@@ -140,9 +142,13 @@ fn main() {
     let mut aux_array = square_array.create_aux();
 
     #[derive(Debug)]
-    struct BestResults(i32, Vec<(i32,i32)>);
-    struct BestResult(i32, Vec<(i32,i32)>);
-    let mut best_result: Option<BestResults> = None;
+    struct BestResults(i32, Vec<(usize, usize)>);
+
+    #[derive(Debug)]
+    struct BestResult(i32, Vec<(usize, usize)>);
+
+    let none = None;
+    let mut best_result: Option<BestResults> = none;
 
     for y in 0usize..square_array.array.len() {
         for x in 0usize..square_array.array.len() {
@@ -160,15 +166,15 @@ fn main() {
                 match &mut best_result {
                     None => {
                         best_result = Some(BestResults(aux_array.array[y][x],
-                                                      vec!((y, x))));
+                                                       vec!((y, x))));
                     }
-                    Some(best) if current_val > best.0 => {
+                    Some(ref mut best) if current_val > best.0 => {
                         best.0 = aux_array.array[y][x];
                         best.1.clear();
-                        best.1.push((y as i32, x as i32));
+                        best.1.push((y, x));
                     }
-                    Some(best) if current_val == best.0 => {
-                        best.1.push((y as i32, x as i32));
+                    Some(ref mut best) if current_val == best.0 => {
+                        best.1.push((y, x));
                     }
                     Some(_) => {}
                 }
@@ -178,12 +184,22 @@ fn main() {
     square_array.print();
     aux_array.print();
 
-    let BestResult(num, results) = best_result.expect("Error");
+    let BestResults(num, results) = best_result.as_ref().expect("Error");
 
-    results.iter().for_each(|r| {
-        aux_array.dunmpWithMax((r.0, r.1, num));
+    results.iter().for_each(|(y,x)| {
+        aux_array.dump_with_max((*y, *x, *num));
         println!();
         println!();
     });
+
+    impl Display for BestResults {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "Best result is {} at {:?}", self.0, self.1)
+        }
+    }
+
+    //let s = best_result.as_ref().map(|s| s.to_string());
+
     println!("Best result {:?}", best_result);
 }
+
